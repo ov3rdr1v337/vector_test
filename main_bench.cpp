@@ -3,13 +3,11 @@
 
 #include "include/vector_impl_1.hpp"
 
-//static constexpr size_t size = 1u << 30u;
-
 void test_vector_impl_1( benchmark::State& states ) 
 {
     for ( auto state : states )
     {
-        const size_t size = states.range(0);
+        const size_t size = states.range( 0 );
 
         container::vector_t<size_t> vector_impl_1;
         
@@ -23,7 +21,7 @@ void test_vector_stl( benchmark::State& states )
 {
     for ( auto state : states )
     {
-        const size_t size = states.range(0);
+        const size_t size = states.range( 0 );
 
         std::vector<size_t> vector_stl;
         
