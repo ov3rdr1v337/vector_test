@@ -10,17 +10,17 @@ namespace container
         <
             class t_arg
         >
-    class vector_t
+    class vector_impl_1_t
     {
         static constexpr size_t     header_size = ( sizeof( t_arg* ) << 1u );
 
     public:
-        using type_t    = vector_t
+        using type_t    = vector_impl_1_t
                             <
                                 t_arg
                             >;
         
-        vector_t() noexcept
+        vector_impl_1_t() noexcept
         {
             t_arg  **mem      = reinterpret_cast<t_arg**> ( malloc( 4u * sizeof( t_arg ) + header_size ) );
             uint8_t *temp_mem = reinterpret_cast<uint8_t*>( mem ) + header_size;
@@ -30,12 +30,12 @@ namespace container
             m_begin     = reinterpret_cast<t_arg* >( temp_mem );
         }
 
-        vector_t( const type_t&  clone ) noexcept 
+        vector_impl_1_t( const type_t&  clone ) noexcept 
         {
 
         }
 
-        vector_t(       type_t&& move  ) noexcept 
+        vector_impl_1_t(       type_t&& move  ) noexcept 
         {
             m_begin = move.m_begin;
         }
@@ -50,7 +50,7 @@ namespace container
             m_begin = move.m_begin;
         }
 
-       ~vector_t()
+       ~vector_impl_1_t()
         {
             clear();
         }
