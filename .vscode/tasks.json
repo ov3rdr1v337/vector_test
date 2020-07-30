@@ -1,9 +1,10 @@
 {
     "version": "2.0.0",
-    "tasks": [
+    "tasks": 
+    [
         {
-            "type": "shell",
-            "label": "C/C++: gcc build active file",
+            "type":  "shell",
+            "label": "Dbg",
             "command": "/usr/bin/g++",
             "args": 
             [
@@ -22,6 +23,33 @@
                 "$gcc"
             ],
             "group": "build"
-        }
+        },
+        {
+            "type":  "shell",
+            "label": "Release_bench",
+            "command": "/usr/bin/g++",
+            "args": 
+            [
+                "-O3",
+                "-march=znver2",
+                "-isystem",
+                "benchmark/include",
+                "-Lbenchmark/build/src",                
+                "${file}",
+                "-lbenchmark",
+                "-lpthread",
+                "-o",
+                "${fileDirname}/${fileBasenameNoExtension}"		
+            ],
+            "options": 
+            {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": 
+            [
+                "$gcc"
+            ],
+            "group": "build"
+        }        
     ]
 }

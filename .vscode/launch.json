@@ -6,7 +6,7 @@
     "configurations": 
     [
         {
-            "name": "g++ - Build and debug active file",
+            "name": "g++ - Build debug",
             "type": "cppdbg",
             "request": "launch",
             "program": "${fileDirname}/${fileBasenameNoExtension}",
@@ -24,8 +24,30 @@
                     "ignoreFailures": true
                 }
             ],
-            "preLaunchTask": "C/C++: g++ build active file",
+            "preLaunchTask": "Dbg",
             "miDebuggerPath": "/usr/bin/gdb"
-        }
+        },
+        {
+            "name": "g++ - Build bench release",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${fileDirname}/${fileBasenameNoExtension}",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": 
+            [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "preLaunchTask": "Release_bench",
+            "miDebuggerPath": "/usr/bin/gdb"
+        }        
     ]
 }
