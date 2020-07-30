@@ -12,6 +12,8 @@ namespace container
         >
     class vector_t
     {
+        static constexpr size_t     header_size = ( sizeof( t_arg* ) << 1u );
+
     public:
         using type_t    = vector_t
                             <
@@ -20,12 +22,12 @@ namespace container
         
         vector_t() noexcept
         {
-            t_arg **mem = reinterpret_cast<t_arg**>( malloc( 4u * sizeof( t_arg ) + 16u ) );
+            t_arg  **mem      = reinterpret_cast<t_arg**> ( malloc( 4u * sizeof( t_arg ) + header_size ) );
+            uint8_t *temp_mem = reinterpret_cast<uint8_t*>( mem ) + header_size;
 
-            mem[0u]     = reinterpret_cast<t_arg* >( reinterpret_cast<uint8_t*>( mem ) + 4u * sizeof( t_arg ) + 16u );
-            mem[1u]     = reinterpret_cast<t_arg* >( reinterpret_cast<uint8_t*>( mem ) + 16u );
-
-            m_begin     = reinterpret_cast<t_arg* >( reinterpret_cast<uint8_t*>( mem ) + 16u );
+            mem[0u]     = reinterpret_cast<t_arg* >( temp_mem + 4u * sizeof( t_arg ) );
+            mem[1u]     = reinterpret_cast<t_arg* >( temp_mem );
+            m_begin     = reinterpret_cast<t_arg* >( temp_mem );
         }
 
         vector_t( const type_t&  clone ) noexcept 
@@ -50,7 +52,7 @@ namespace container
 
        ~vector_t()
         {
-            free( reinterpret_cast<t_arg**>( m_begin ) - 2u );
+            clear();
         }
 
         t_arg  *begin()
@@ -78,7 +80,12 @@ namespace container
             return end() - begin();
         }
 
-        void push( const t_arg& element )
+        void    clear()
+        {
+            free( reinterpret_cast<t_arg**>( m_begin ) - 2u );
+        }
+
+        void    push( const t_arg& element )
         {
             if ( reinterpret_cast<t_arg**>( m_begin )[-1] == reinterpret_cast<t_arg**>( m_begin )[-2] )
             {
@@ -87,22 +94,22 @@ namespace container
 
                 const size_t new_size = old_size << 1u;
 
-                t_arg **mem = reinterpret_cast<t_arg**>( malloc( new_size + 16u ) );
+                t_arg  **mem        = reinterpret_cast<t_arg** >( malloc( new_size + header_size ) );
+                uint8_t *temp_mem   = reinterpret_cast<uint8_t*>( mem ) + header_size;
 
-                mem[0u]     = reinterpret_cast<t_arg* >( reinterpret_cast<uint8_t*>( mem ) + new_size + 16u );
-                mem[1u]     = reinterpret_cast<t_arg* >( reinterpret_cast<uint8_t*>( mem ) + old_size + 16u );
+                mem[0u]     = reinterpret_cast<t_arg* >( temp_mem + new_size );
+                mem[1u]     = reinterpret_cast<t_arg* >( temp_mem + old_size );
 
                 std::memcpy
                         ( 
                             mem + 2u, 
                             m_begin ,
-                            
-                            old_size + 16u
+                            old_size + header_size
                         );                
 
-                free( reinterpret_cast<t_arg**>( m_begin ) - 2u );
+                clear();
 
-                m_begin     = reinterpret_cast<t_arg* >( reinterpret_cast<uint8_t*>( mem ) + 16u );                
+                m_begin     = reinterpret_cast<t_arg* >( temp_mem );                
             }
 
             reinterpret_cast<t_arg**>( m_begin )[-1]++[0] = element;
