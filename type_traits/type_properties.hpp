@@ -1,75 +1,163 @@
-namespace type_traits
+#pragma once
+
+#include "helper_traits.hpp"
+#include "type_modifications.hpp"
+#include "primary_type_traits.hpp"
+#include "composite_type_traits.hpp"
+#include "compiler_sfinae_intrinsics.hpp"
+
+namespace traits
 {
-    template<class T>
+    /// is_const
+    template
+        <
+            class t_arg
+        >
     struct is_const :
-           false_type
+                false_type
     {};
 
-    template<class T>
-    struct is_const<const T> : 
-           true_type
+    template
+        <
+            class t_arg
+        >
+    struct is_const<const t_arg> :
+                true_type
     {};
 
-    template<class T>
-    struct is_volatile : 
-           false_type
+    /// is_volatile
+    template
+        <
+            class t_arg
+        >
+    struct is_volatile :
+                false_type
     {};
 
-    template<class T>
-    struct is_volatile<volatile T> : 
-           true_type
+    template
+        <
+            class t_arg
+        >
+    struct is_volatile<volatile t_arg> :
+                true_type
     {};
 
-    template<class T, bool = is_void<T>::value   ||
-                             is_reference<T>::value>
+    /// is_cv_qualified
+    template
+        <
+            class t_arg
+        >
+    struct is_cv_qualified :
+                false_type
+    {};
+
+    template
+        <
+            class t_arg
+        >
+    struct is_cv_qualified<t_arg volatile> :
+                true_type
+    {};
+
+    template
+        <
+            class t_arg
+        >
+    struct is_cv_qualified<t_arg const> :
+                true_type
+    {};
+
+    template
+        <
+            class t_arg
+        >
+    struct is_cv_qualified<t_arg const volatile> :
+                true_type
+    {};
+
+    /// is_constructible
+//    template
+//        <
+//            class    t_arg ,
+//            class... t_args>
+//    struct is_constructible :
+//                    integral_constant
+//                            <
+//                                bool,
+//                                COMPILER_INTRINS__IS_CONSTRUCTIBLE( t_arg, t_args... )
+//                            >
+//    {};
+
+
+//    /// is_copy_constructible
+//    template
+//        <
+//            class t_arg
+//        >
+//    struct is_copy_constructible :
+//                    is_constructible
+//                            <
+//                                t_arg   ,
+//                                const t_arg&
+//                            >
+//    {};
+
+    template
+        <
+            class t_arg,
+            bool =  is_void<t_arg>::value       ||
+                    is_reference<t_arg>::value
+        >
     struct is_trivially_copyable_helper
     {};
 
-    template<class T>
-    struct is_trivially_copyable_helper<T, true> :
-           false_type
-    {};   
 
-    template<class T>
-    struct is_trivially_copyable_helper<T, false> :
-           bool_constant<is_scalar<T>::value || 
-                         __is_trivially_copyable( T )>
-    {}; 
+    template
+        <
+            class t_arg
+        >
+    struct is_trivially_copyable_helper<t_arg, true> :
+                false_type
+    {};
 
-    template<class T>
+    template
+        <
+            class t_arg
+        >
+    struct is_trivially_copyable_helper<t_arg, false> :
+                bool_constant
+                        <
+                            is_scalar<t_arg>::value     ||
+                            COMPILER_INTRINS__IS_TRIVIALLY_COPYABLE( t_arg )
+                        >
+    {};
+
+    /// is_trivially_copyable
+    template
+        <
+            class t_arg
+        >
     struct is_trivially_copyable :
-           is_trivially_copyable_helper<remove_cv_t<remove_all_extents_t<T>>>
+                    is_trivially_copyable_helper
+                            <
+                                remove_cv_t
+                                        <
+                                            remove_all_extents_t<t_arg>
+                                        >
+                            >
     {};
 
-    template<class T>
-    struct is_trivial :
-           bool_constant<is_trivially_copyable<T>::value ||
-                         is_trivially_default_constructible<T>::value>
+    /// is_trivially_destructible
+    template
+        <
+            class t_arg
+        >
+    struct is_trivially_destructible :
+                    integral_constant
+                            <
+                                bool,
+                                COMPILER_INTRINS__IS_TRIVIALLY_DESTRUCTIBLE( t_arg )
+                            >
     {};
 
-    template<class T, bool = is_void<T>::value   ||
-                             is_reference<T>::value>
-    struct is_standard_layout_helper
-    {};
-
-    template<class T>
-    struct is_standard_layout_helper<T, true> :
-           false_type
-    {};   
-
-    template<class T>
-    struct is_standard_layout_helper<T, false> :
-           bool_constant<is_scalar<T>::value || 
-                         __is_standard_layout( T )>
-    {}; 
-
-    template<class T>
-    struct is_standard_layout :
-           is_standard_layout_helper<remove_cv_t<remove_all_extents_t<T>>>
-    {};
-
-    template<class T>
-    struct has_unique_object_representations :
-           bool_constant<__has_unique_object_representations( remove_cv_t<remove_all_extents_t<T>> )>
-    {};
-};
+} // namespace traits
