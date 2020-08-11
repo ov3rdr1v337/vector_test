@@ -14,9 +14,9 @@ namespace container
     {
     public:
         using type_t    = vector_impl_2_t
-                            <
-                                t_arg
-                            >;
+                                <
+                                    t_arg
+                                >;
         
         vector_impl_2_t() noexcept
         {

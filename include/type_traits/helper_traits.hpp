@@ -37,7 +37,7 @@ namespace traits
         >
     using   bool_constant = integral_constant
                                     <
-                                        bool    ,
+                                        bool ,
                                         t_arg
                                     >;
 
@@ -47,8 +47,8 @@ namespace traits
     /// is_same
     template
         <
-            class t_arg1    ,
-            class t_arg2
+            class t_arg_1,
+            class t_arg_2
         >
     struct is_same :
                 false_type
@@ -58,46 +58,65 @@ namespace traits
         <
             class t_arg
         >
-    struct is_same<t_arg, t_arg> :
-                true_type
+    struct is_same
+                <
+                    t_arg,
+                    t_arg
+                > : 
+            true_type
     {};
 
     /// conditional
     template
         <
-            bool  val   ,
-            class T     ,
-            class F
+            bool  val        ,
+            class t_true_arg ,
+            class t_false_arg            
         >
     struct conditional
     {};
 
     template
         <
-            class T ,
-            class F
+            class t_true_arg ,
+            class t_false_arg
         >
-    struct conditional<true, T, F>
+    struct conditional
+                <
+                    true,
+                    t_true_arg,
+                    t_false_arg
+                >
     {
-        using   type = T;
+        using   type = t_true_arg;
     };
 
     template
         <
-            class T ,
-            class F
+            class t_true_arg,
+            class t_false_arg
         >
-    struct conditional<false, T, F>
+    struct conditional
+                <
+                    false, 
+                    t_true_arg, 
+                    t_false_arg
+                >
     {
-        using   type = F;
+        using   type = t_false_arg;
     };
 
     template
         <
-            bool  B ,
-            class T ,
-            class F
+            bool  bool_value ,
+            class t_true_arg ,
+            class t_false_arg
         >
-    using conditional_t = typename conditional<B, T, F>::type;
+    using conditional_t = typename conditional
+                                        <
+                                            bool_value,
+                                            t_true_arg,
+                                            t_false_arg
+                                        >::type;
 
 } // namespace traits

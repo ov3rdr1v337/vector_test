@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cstdint>
+
 namespace traits
 {
     /// add_const
@@ -137,15 +139,6 @@ namespace traits
     {
         using   type = t_arg;
     };
-
-//    template
-//        <
-//            class t_arg
-//        >
-//    struct remove_cv
-//    {
-//        using   type = remove_const_t<remove_volatile_t<t_arg>>;
-//    };
 
     template
         <

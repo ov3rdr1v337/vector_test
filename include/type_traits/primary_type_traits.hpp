@@ -33,46 +33,6 @@ namespace traits
                         >
     {};
 
-
-//    template
-//            <
-//                class t_arg
-//            >
-//    struct is_nullptr_t_cv
-//    {
-//        static const bool value = false;
-//    };
-//
-//    template <>
-//    struct is_nullptr_t_cv<std::nullptr_t>
-//    {
-//        static const bool value = true;
-//    };
-//
-//    /// is_nullptr_t
-//    template
-//            <
-//                    class t_arg
-//            >
-//    struct is_nullptr_t
-//            : is_nullptr_t_cv<typename remove_cv<t_arg>::type>
-//    {};
-//    template
-//        <
-//            class t_arg
-//        >
-//    struct is_null_pointer :
-//            bool_constant
-//                    <
-//                        bool,
-//                        is_same
-//                            <
-//                                remove_cv_t<t_arg>,
-//                                is_nullptr_t
-//                            >::value
-//                    >
-//    {};
-
     /// is_null_pointer
     template
         <
@@ -234,7 +194,7 @@ namespace traits
 
     template
         <
-            class t_arg,
+            class       t_arg,
             std::size_t size
         >
     struct is_array<t_arg[size]> :
@@ -317,7 +277,7 @@ namespace traits
             class    t_type ,
             class... t_args
         >
-    struct is_function<t_type( t_args... )  volatile> :
+    struct is_function<t_type( t_args... ) volatile> :
                 true_type
     {};
 
@@ -326,7 +286,7 @@ namespace traits
             class    t_type ,
             class... t_args
         >
-    struct is_function<t_type( t_args... )  const volatile> :
+    struct is_function<t_type( t_args... ) const volatile> :
                 true_type
     {};
 
@@ -344,7 +304,7 @@ namespace traits
             class    t_type ,
             class... t_args
         >
-    struct is_function<t_type( t_args... , ... )  const> :
+    struct is_function<t_type( t_args... , ... ) const> :
                 true_type
     {};
 
@@ -353,7 +313,7 @@ namespace traits
             class    t_type ,
             class... t_args
         >
-    struct is_function<t_type( t_args... , ... )  volatile> :
+    struct is_function<t_type( t_args... , ... ) volatile> :
                 true_type
     {};
 
@@ -362,7 +322,7 @@ namespace traits
             class    t_type ,
             class... t_args
         >
-    struct is_function<t_type( t_args... , ... )  const volatile> :
+    struct is_function<t_type( t_args... , ... ) const volatile> :
                 true_type
     {};
 
@@ -371,7 +331,7 @@ namespace traits
             class    t_type ,
             class... t_args
         >
-    struct is_function<t_type( t_args...)  &> :
+    struct is_function<t_type( t_args...) &> :
                 true_type
     {};
 
@@ -407,7 +367,7 @@ namespace traits
             class    t_type ,
             class... t_args
         >
-    struct is_function<t_type( t_args... , ... )  &> :
+    struct is_function<t_type( t_args... , ... ) &> :
                 true_type
     {};
 
@@ -416,7 +376,7 @@ namespace traits
             class    t_type ,
             class... t_args
         >
-    struct is_function<t_type( t_args... , ... )  const &> :
+    struct is_function<t_type( t_args... , ... ) const &> :
                 true_type
     {};
 
@@ -425,7 +385,7 @@ namespace traits
             class    t_type ,
             class... t_args
         >
-    struct is_function<t_type( t_args... , ... )  volatile &> :
+    struct is_function<t_type( t_args... , ... ) volatile &> :
                 true_type
     {};
 
@@ -434,7 +394,7 @@ namespace traits
             class    t_type ,
             class... t_args
         >
-    struct is_function<t_type( t_args... , ... )  const volatile &> :
+    struct is_function<t_type( t_args... , ... ) const volatile &> :
                 true_type
     {};
 
@@ -809,7 +769,7 @@ namespace traits
                 bool_constant
                         <
                             is_member_function_pointer<t_arg>::value    ||
-                            is_member_object_pointer<t_arg>::value
+                            is_member_object_pointer  <t_arg>::value
                         >
     {};
 

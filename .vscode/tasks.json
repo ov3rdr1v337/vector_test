@@ -8,6 +8,7 @@
             "command": "/usr/bin/g++",
             "args": 
             [
+                "-std=c++2a",                
                 "-g3",
 				"-O0",
 				"${file}",
@@ -30,6 +31,7 @@
             "command": "/usr/bin/g++",
             "args": 
             [
+                "-std=c++2a",
                 "-O3",
                 "-march=znver2",
                 "-isystem",

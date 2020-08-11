@@ -3,6 +3,7 @@
 #include <cstring>
 #include <cstdint>
 #include <cstdlib>
+#include <cstdio>
 
 namespace container
 {
@@ -12,8 +13,6 @@ namespace container
         >
     class vector_impl_1_t
     {
-        static constexpr size_t     header_size = ( sizeof( t_arg* ) << 1u );
-
     public:
         using type_t    = vector_impl_1_t
                             <
@@ -22,12 +21,10 @@ namespace container
         
         vector_impl_1_t() noexcept
         {
-            t_arg  **mem      = reinterpret_cast<t_arg**> ( malloc( 4u * sizeof( t_arg ) + header_size ) );
-            uint8_t *temp_mem = reinterpret_cast<uint8_t*>( mem ) + header_size;
+            m_begin     = static_cast<t_arg*> ( malloc( 32u * sizeof( t_arg ) ) );
+            m_end       = m_begin;
 
-            mem[0u]     = reinterpret_cast<t_arg* >( temp_mem + 4u * sizeof( t_arg ) );
-            mem[1u]     = reinterpret_cast<t_arg* >( temp_mem );
-            m_begin     = reinterpret_cast<t_arg* >( temp_mem );
+            m_m_end     = m_begin + 32u;
         }
 
         vector_impl_1_t( const type_t&  clone ) noexcept 
@@ -57,22 +54,22 @@ namespace container
 
         t_arg  *begin()
         {
-            return reinterpret_cast<t_arg* >( m_begin );
+            return m_begin;
         }
 
         t_arg  *end()
         {
-            return reinterpret_cast<t_arg**>( m_begin )[-1];
+            return m_end;
         }
 
         t_arg  *begin() const
         {
-            return reinterpret_cast<t_arg* >( m_begin );
+            return m_begin;
         }
 
         t_arg  *end()   const
         {
-            return reinterpret_cast<t_arg**>( m_begin )[-1];
+            return m_end;
         }
 
         size_t  size() const
@@ -82,40 +79,48 @@ namespace container
 
         void    clear()
         {
-            free( reinterpret_cast<t_arg**>( m_begin ) - 2u );
+            free( m_begin );
         }
 
         void    push( const t_arg& element )
         {
-            if ( reinterpret_cast<t_arg**>( m_begin )[-1] == reinterpret_cast<t_arg**>( m_begin )[-2] )
+            if ( m_end == m_m_end )
             {
-                const size_t old_size = reinterpret_cast<uint8_t**>( m_begin )[-1] - 
-                                        reinterpret_cast<uint8_t* >( m_begin );
+                const size_t old_size = reinterpret_cast<uint8_t*>( m_end ) - 
+                                        reinterpret_cast<uint8_t*>( m_begin );
 
-                const size_t new_size = old_size << 1u;
+                const size_t new_size = old_size << 2u;
 
-                t_arg  **mem        = reinterpret_cast<t_arg** >( malloc( new_size + header_size ) );
-                uint8_t *temp_mem   = reinterpret_cast<uint8_t*>( mem ) + header_size;
+                try
+                {
+                    uint8_t *m_begin_new  = new uint8_t[new_size];
+                
+                    m_end                 = reinterpret_cast<t_arg*>( m_begin_new + old_size );
+                    m_m_end               = reinterpret_cast<t_arg*>( m_begin_new + new_size );
 
-                mem[0u]     = reinterpret_cast<t_arg* >( temp_mem + new_size );
-                mem[1u]     = reinterpret_cast<t_arg* >( temp_mem + old_size );
+                    std::memcpy
+                            ( 
+                                m_begin_new , 
+                                m_begin     ,
+                                old_size
+                            );
 
-                std::memcpy
-                        ( 
-                            mem + 2u, 
-                            m_begin ,
-                            old_size + header_size
-                        );                
+                    clear();
 
-                clear();
-
-                m_begin     = reinterpret_cast<t_arg* >( temp_mem );                
+                    m_begin     = reinterpret_cast<t_arg*>( m_begin_new );
+                }
+                catch( ... )
+                {
+                    printf( "10" );
+                }                
             }
 
-            reinterpret_cast<t_arg**>( m_begin )[-1]++[0] = element;
+            m_end++[0] = element;
         }
         
     private:
         t_arg   *m_begin;
+        t_arg   *m_end;
+        t_arg   *m_m_end;
     }; 
 };

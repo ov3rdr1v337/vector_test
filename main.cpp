@@ -1,6 +1,19 @@
 #include "include/vector_impl_2.hpp"
 
 #include <iostream>
+#include <vector>
+
+struct A
+{
+    size_t a = 1337u;
+
+    A() = default;
+
+    A( const A& clone )
+    {
+        std::cout << 1234 << std::endl;
+    }
+};
 
 int main()
 {

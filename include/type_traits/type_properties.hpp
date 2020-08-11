@@ -160,23 +160,22 @@ namespace traits
     inline constexpr bool is_trivially_copyable_v = is_trivially_copyable<t_arg>::value;
 
     /// is_trivially_destructible
-    template
-        <
-            class t_arg
-        >
-    struct is_trivially_destructible :
-                    integral_constant
-                            <
-                                bool,
-                                COMPILER_INTRINSIC_IS_TRIVIALLY_DESTRUCTIBLE( t_arg )
-                            >
-    {};
+    // template
+    //     <
+    //         class t_arg
+    //     >
+    // struct is_trivially_destructible :
+    //                 integral_constant
+    //                         <
+    //                             bool,
+    //                             COMPILER_INTRINSIC_IS_TRIVIALLY_DESTRUCTIBLE( t_arg )
+    //                         >
+    // {};
 
-    template
-        <
-            class t_arg
-        >
-    inline constexpr bool is_trivially_destructible_v = is_trivially_destructible<t_arg>::value;
-
+    // template
+    //     <
+    //         class t_arg
+    //     >
+    // inline constexpr bool is_trivially_destructible_v = is_trivially_destructible<t_arg>::value;
 
 } // namespace traits

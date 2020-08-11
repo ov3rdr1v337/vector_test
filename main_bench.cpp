@@ -4,6 +4,8 @@
 #include "include/vector_impl_1.hpp"
 #include "include/vector_impl_2.hpp"
 
+#include "include/type_traits/type_properties.hpp"
+
 void test_vector_impl_1( benchmark::State& states ) 
 {
     for ( auto state : states )
@@ -13,7 +15,7 @@ void test_vector_impl_1( benchmark::State& states )
         container::vector_impl_1_t<size_t> vector_impl_1;
         
         for ( size_t i = 0u; i < size; ++i )
-            vector_impl_1.push( i );
+            vector_impl_1.push( i );    
     }
 }
 BENCHMARK(test_vector_impl_1)->Range( 0, 1 << 30 );

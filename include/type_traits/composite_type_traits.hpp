@@ -12,7 +12,7 @@ namespace traits
     struct is_arithmetic :
                     bool_constant
                             <
-                                is_integral<t_arg>::value           ||
+                                is_integral<t_arg>::value       ||
                                 is_floating_point<t_arg>::value
                             >
     {};
