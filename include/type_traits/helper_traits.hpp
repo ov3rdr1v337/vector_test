@@ -33,12 +33,12 @@ namespace traits
     /// bool_constant
     template
         <
-            bool t_arg
+            bool bool_value
         >
     using   bool_constant = integral_constant
                                     <
                                         bool ,
-                                        t_arg
+                                        bool_value
                                     >;
 
     using   false_type = bool_constant<false>;
@@ -69,7 +69,7 @@ namespace traits
     /// conditional
     template
         <
-            bool  val        ,
+            bool  bool_value ,
             class t_true_arg ,
             class t_false_arg            
         >
@@ -118,5 +118,22 @@ namespace traits
                                             t_true_arg,
                                             t_false_arg
                                         >::type;
+
+    template
+        <
+            bool  bool_value,
+            class t_arg     = void
+        >
+    struct enable_if 
+    {};
+    
+    template
+        <
+            class t_arg
+        >
+    struct enable_if<true, t_arg>
+    {
+        using   type = t_arg;
+    };                                        
 
 } // namespace traits

@@ -46,7 +46,6 @@ namespace traits
                         >
     {};
 
-
     template
         <
             class t_arg

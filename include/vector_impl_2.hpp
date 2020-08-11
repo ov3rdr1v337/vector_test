@@ -4,6 +4,9 @@
 #include <cstdint>
 #include <cstdlib>
 
+#include "type_traits/helper_traits.hpp"
+#include "type_traits/type_properties.hpp"
+
 namespace container
 {
     template
@@ -81,7 +84,12 @@ namespace container
             free( m_begin );
         }
 
-        void    push( const t_arg& element )
+        traits::enable_if
+            <
+                traits::is_trivially_copyable<t_arg>::value, 
+                void
+            > ::type
+        push( const t_arg& element )
         {
             if ( m_end == m_m_end )
             {
@@ -109,7 +117,27 @@ namespace container
 
             m_end++[0] = element;
         }
-        
+
+        traits::enable_if
+            <
+                traits::is_trivially_copyable<t_arg>::value, 
+                void
+            > ::type
+        push( const t_arg& element )
+        {
+
+        }
+
+        traits::enable_if
+            <
+                traits::is_trivially_copyable<t_arg>::value, 
+                void
+            > ::type
+        push( const t_arg& element )
+        {
+
+        }
+
     private:
         t_arg   *m_begin;
         t_arg   *m_end;
