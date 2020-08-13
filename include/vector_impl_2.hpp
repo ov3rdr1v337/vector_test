@@ -128,22 +128,60 @@ namespace container
             <
                 class u_arg = t_arg
             >
-        traits::enable_if
+        std::enable_if_t
             <
-               !traits::is_trivially_copyable<u_arg>::value, 
+               !std::is_trivially_copyable<t_arg>        ::value &&
+                std::is_nothrow_move_constructible<t_arg>::value, 
                 void
-            > ::type
+            >
+        push_back( const t_arg& element )
+        {
+            if ( m_end == m_m_end )
+            {
+                const size_t old_size = reinterpret_cast<uint8_t*>( m_end ) - 
+                                        reinterpret_cast<uint8_t*>( m_begin );
+
+                const size_t new_size = old_size << grow_constant;
+
+                uint8_t *m_begin_new  = reinterpret_cast<uint8_t*>( malloc( new_size ) );
+
+                m_end                 = reinterpret_cast<t_arg*>( m_begin_new + old_size );
+                m_m_end               = reinterpret_cast<t_arg*>( m_begin_new + new_size );
+
+                for (; m_begin_new != m_end; ++m_begin, ++m_begin_new )
+                    *m_begin_new = std::move( *m_begin );
+            }
+
+            *m_begin_new = std::move();
+        }
+
+        template
+            <
+                class u_arg = t_arg
+            >
+        std::enable_if_t
+            <
+               !std::is_trivially_copyable<t_arg>        ::value &&
+               !std::is_nothrow_move_constructible<t_arg>::value &&
+               !std::is_copy_constructible<t_arg>        ::value ), 
+                void
+            >
         push_back( const t_arg& element )
         {
 
         }
 
+        // template
+        //     <
+        //         class u_arg = t_arg
+        //     >
         // traits::enable_if
         //     <
-        //         traits::is_trivially_copyable<t_arg>::value, 
+        //         traits::is_nothrow_move_constructible<u_arg>::value ||
+        //        !traits::is_copy_constructible<u_arg>        ::value, 
         //         void
         //     > ::type
-        // push( const t_arg& element )
+        // push_back( const t_arg& element )
         // {
 
         // }
