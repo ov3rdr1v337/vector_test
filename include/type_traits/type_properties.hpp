@@ -1,10 +1,6 @@
 #pragma once
 
-#include "helper_traits.hpp"
-#include "type_modifications.hpp"
 #include "primary_type_traits.hpp"
-#include "composite_type_traits.hpp"
-#include "compiler_sfinae_intrinsics.hpp"
 
 namespace traits
 {
@@ -75,6 +71,37 @@ namespace traits
                 true_type
     {};
 
+
+    /// is_arithmetic
+    template
+        <
+            class t_arg
+        >
+    struct is_arithmetic :
+                    bool_constant
+                            <
+                                is_integral<t_arg>::value       ||
+                                is_floating_point<t_arg>::value
+                            >
+    {};
+
+    /// is_scalar
+    template
+        <
+            class t_arg
+        >
+    struct is_scalar :
+                bool_constant
+                        <
+                            is_enum<t_arg>::value               ||
+                            is_pointer<t_arg>::value            ||
+                            is_arithmetic<t_arg>::value         ||
+                            is_null_pointer<t_arg>::value       ||
+                            is_member_pointer<t_arg>::value
+                        >
+    {};
+
+
     /// is_constructible
     template
         <
@@ -94,8 +121,8 @@ namespace traits
         <
             class t_arg
         >
-    struct is_copy_constructible :
-                    is_constructible
+    struct is_copy_constructible 
+                : is_constructible
                             <
                                       t_arg ,
                                 const t_arg&
@@ -159,23 +186,108 @@ namespace traits
         >
     inline constexpr bool is_trivially_copyable_v = is_trivially_copyable<t_arg>::value;
 
-    /// is_trivially_destructible
-    // template
-    //     <
-    //         class t_arg
-    //     >
-    // struct is_trivially_destructible :
-    //                 integral_constant
-    //                         <
-    //                             bool,
-    //                             COMPILER_INTRINSIC_IS_TRIVIALLY_DESTRUCTIBLE( t_arg )
-    //                         >
-    // {};
+    template
+        <
+            typename  t_arg,
+            bool    = is_void<t_arg>::value                 ||
+                      //is_array_unknown_bounds<t_arg>::value || 
+                      is_function <t_arg>::value,
+            bool    = is_reference<t_arg>::value || 
+                      is_scalar   <t_arg>::value
+        >
+    struct is_destructible_impl
+    {};
+    
+    template
+        <
+            typename t_arg
+        >
+    struct is_destructible_impl
+                        <
+                            t_arg,
+                            false,
+                            false
+                        > 
+                    : is_destructible_impl
+                            <
+                                typename remove_all_extents<_Tp>::type
+                            >::type
+    {};
 
-    // template
-    //     <
-    //         class t_arg
-    //     >
-    // inline constexpr bool is_trivially_destructible_v = is_trivially_destructible<t_arg>::value;
+    template
+        <
+            typename t_arg
+        >
+    struct is_destructible_impl
+                        <
+                            t_arg,
+                            true ,
+                            false
+                        > 
+                    : false_type 
+    {};
 
+    template
+        <
+            typename t_arg
+        >
+    struct is_destructible_impl
+                        <
+                            t_arg,
+                            false, 
+                            true
+                        >
+                    : true_type 
+    {};
+
+    /// is_destructible
+    template
+        <
+            typename t_arg
+        >
+    struct is_destructible
+                : is_destructible_safe<t_arg>::type
+    {
+        // static_assert
+        //         ( 
+        //             std::__is_complete_or_unbounded( __type_identity<_Tp>{} ), 
+        //             "template argument must be a complete class or an unbounded array"
+        //         );
+    };    
+
+    template
+        <
+            typename t_arg,
+            bool   = is_referenceable<t_arg>::value
+        >
+    struct is_nothrow_move_constructible_impl
+    {};
+
+    template
+        <
+            typename t_arg
+        >
+    struct is_nothrow_move_constructible_impl<t_arg, false>
+                : public false_type 
+    {};
+
+    template
+        <
+            typename t_arg
+        >
+    struct is_nothrow_move_constructible_impl<t_arg, true>
+                : public __is_nothrow_constructible_impl<t_arg, t_arg&&>
+    {};
+
+    /// is_nothrow_move_constructible
+    template<typename t_arg>
+    struct is_nothrow_move_constructible
+            : public is_nothrow_move_constructible_impl<t_arg>::type
+    {
+        // static_assert
+        //         ( 
+        //             std::__is_complete_or_unbounded( __type_identity<_Tp>{} ),
+        //            "template argument must be a complete class or an unbounded array"
+        //         );
+    };
 } // namespace traits

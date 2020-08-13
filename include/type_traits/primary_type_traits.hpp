@@ -4,7 +4,7 @@
 #include "type_modifications.hpp"
 #include "compiler_sfinae_intrinsics.hpp"
 
-#include <cstddef>  // std::size_t
+#include <cstddef> 
 
 namespace traits
 {

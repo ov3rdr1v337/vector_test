@@ -13,15 +13,17 @@ namespace container
         <
             class t_arg
         >
-    class vector_impl_2_t
+    class vector_t
     {
+        static constexpr size_t grow_constant      =   2u;
+
     public:
-        using type_t    = vector_impl_2_t
+        using type_t    = vector_t
                                 <
                                     t_arg
                                 >;
         
-        vector_impl_2_t() noexcept
+        vector_t() noexcept
         {
             m_begin     = static_cast<t_arg*> ( malloc( 32u * sizeof( t_arg ) ) );
             m_end       = m_begin;
@@ -29,12 +31,12 @@ namespace container
             m_m_end     = m_begin + 32u;
         }
 
-        vector_impl_2_t( const type_t&  clone ) noexcept 
+        vector_t( const type_t&  clone ) noexcept 
         {
 
         }
 
-        vector_impl_2_t(       type_t&& move  ) noexcept 
+        vector_t(       type_t&& move  ) noexcept 
         {
             m_begin = move.m_begin;
         }
@@ -49,7 +51,7 @@ namespace container
             m_begin = move.m_begin;
         }
 
-       ~vector_impl_2_t()
+       ~vector_t()
         {
             clear();
         }
@@ -84,21 +86,25 @@ namespace container
             free( m_begin );
         }
 
+        template
+            <
+                class u_arg = t_arg
+            >
         traits::enable_if
             <
-                traits::is_trivially_copyable<t_arg>::value, 
+                traits::is_trivially_copyable<u_arg>::value, 
                 void
             > ::type
-        push( const t_arg& element )
+        push_back( const t_arg& element )
         {
             if ( m_end == m_m_end )
             {
                 const size_t old_size = reinterpret_cast<uint8_t*>( m_end ) - 
                                         reinterpret_cast<uint8_t*>( m_begin );
 
-                const size_t new_size = old_size << 2u;
+                const size_t new_size = old_size << grow_constant;
 
-                uint8_t *m_begin_new  = static_cast<uint8_t*> ( malloc( new_size ) );
+                uint8_t *m_begin_new  = reinterpret_cast<uint8_t*>( malloc( new_size ) );
 
                 m_end                 = reinterpret_cast<t_arg*>( m_begin_new + old_size );
                 m_m_end               = reinterpret_cast<t_arg*>( m_begin_new + new_size );
@@ -115,28 +121,32 @@ namespace container
                 m_begin     = reinterpret_cast<t_arg*>( m_begin_new );
             }
 
-            m_end++[0] = element;
+            std::memcpy( m_end++, &element, sizeof( t_arg ) );
         }
 
+        template
+            <
+                class u_arg = t_arg
+            >
         traits::enable_if
             <
-                traits::is_trivially_copyable<t_arg>::value, 
+               !traits::is_trivially_copyable<u_arg>::value, 
                 void
             > ::type
-        push( const t_arg& element )
+        push_back( const t_arg& element )
         {
 
         }
 
-        traits::enable_if
-            <
-                traits::is_trivially_copyable<t_arg>::value, 
-                void
-            > ::type
-        push( const t_arg& element )
-        {
+        // traits::enable_if
+        //     <
+        //         traits::is_trivially_copyable<t_arg>::value, 
+        //         void
+        //     > ::type
+        // push( const t_arg& element )
+        // {
 
-        }
+        // }
 
     private:
         t_arg   *m_begin;
